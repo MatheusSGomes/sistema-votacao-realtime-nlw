@@ -1,9 +1,29 @@
 import fastity from "fastify";
+import { PrismaClient } from "@prisma/client"
+import { z } from "zod"
+
 
 const app = fastity();
 const HTTP_PORT = 3333;
 
-app.get('/', () => "Olá mundo!")
+const prisma = new PrismaClient();
+
+app.post('/polls', async (request, reply) => {
+
+  const createPollBody = z.object({
+    title: z.string(),
+  })
+
+  const { title } = createPollBody.parse(request.body)
+
+  const poll = await prisma.poll.create({
+    data: {
+      title,
+    }
+  })
+
+  return reply.status(201).send({ pollId: poll.id })
+})
 
 app.listen({ port: HTTP_PORT }).then(() => {
   console.log(`HTTP server running on port ${HTTP_PORT}`);
