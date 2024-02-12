@@ -25,6 +25,7 @@ model PollOption {
   id      String  @id @default(uuid())
   title   String
   pollId  String
+  // votesAmount Int // alternativa para cache no próprio PostgreSQL - É um "alto increment" a cada voto
 
   poll    Poll    @relation(fields: [pollId], references: [id])
   votes   Vote[]
